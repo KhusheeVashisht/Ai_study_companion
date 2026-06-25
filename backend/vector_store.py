@@ -1,14 +1,43 @@
-from langchain.vectorstores import FAISS
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_text_splitters import (
+    RecursiveCharacterTextSplitter
+)
+
+from langchain_community.vectorstores import (
+    FAISS
+)
+
+from langchain_community.embeddings import (
+    HuggingFaceEmbeddings
+)
 
 
-def create_vector(docs):
 
-    embed=OpenAIEmbeddings()
+def create_vector_store(docs):
 
-    db=FAISS.from_documents(
-        docs,
-        embed
+    splitter = (
+        RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=200
+        )
     )
 
-    return db
+    chunks = (
+        splitter.split_documents(
+            docs
+        )
+    )
+
+    embeddings = (
+        HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2"
+        )
+    )
+
+    db = (
+        FAISS.from_documents(
+            chunks,
+            embeddings
+        )
+    )
+
+    return db, chunks

@@ -5,6 +5,6 @@ def load_pdf(filepath):
 
     loader = PyPDFLoader(filepath)
 
-    documents = loader.load()
+    docs = loader.load()
 
-    return documents
+    return docs
