@@ -9,9 +9,29 @@ from dotenv import (
 load_dotenv()
 
 
+STYLE_PROMPTS = {
+
+    "Short":
+    "Answer briefly and directly.",
+
+    "Detailed":
+    "Answer thoroughly and include explanations.",
+
+    "Exam Answer":
+    "Write in exam style with introduction, body and conclusion.",
+
+    "Bullet Points":
+    "Answer using bullet points only.",
+
+    "Simple Explanation":
+    "Explain in very easy language."
+}
+
+
 def ask_question(
         db,
-        question
+        question,
+        answer_mode
 ):
 
     docs = (
@@ -22,6 +42,7 @@ def ask_question(
     )
 
     context = "\n\n".join(
+
         [
             doc.page_content
             for doc in docs
@@ -34,10 +55,25 @@ def ask_question(
         )
     )
 
-    prompt = f"""
-Answer only from the provided notes.
+    style = (
+        STYLE_PROMPTS.get(
+            answer_mode,
+            STYLE_PROMPTS["Detailed"]
+        )
+    )
 
-Notes:
+    prompt = f"""
+Answer ONLY using uploaded document content.
+
+If there is not enough information,
+say:
+
+"I could not find enough evidence in the uploaded document."
+
+Response Style:
+{style}
+
+Document:
 {context}
 
 Question:

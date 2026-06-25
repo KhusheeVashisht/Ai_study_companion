@@ -13,7 +13,6 @@ st.set_page_config(
 
 st.title("🎓 AI Study Companion")
 
-
 uploaded = st.file_uploader(
     "Upload study material",
     type=["pdf"]
@@ -85,20 +84,34 @@ if uploaded:
         f"Chunks created: {len(chunks)}"
     )
 
+    st.divider()
+
+    answer_mode = st.selectbox(
+        "Choose response style",
+        [
+            "Short",
+            "Detailed",
+            "Exam Answer",
+            "Bullet Points",
+            "Simple Explanation"
+        ]
+    )
+
     question = st.text_input(
-        "Ask your notes"
+        "Ask about the uploaded document"
     )
 
     if question:
 
         with st.spinner(
-            "Thinking..."
+            "Searching notes..."
         ):
 
             answer, sources = (
                 ask_question(
                     db,
-                    question
+                    question,
+                    answer_mode
                 )
             )
 
@@ -119,10 +132,10 @@ if uploaded:
             start=1
         ):
 
-            st.write(
+            with st.expander(
                 f"Source {i}"
-            )
+            ):
 
-            st.info(
-                source.page_content[:300]
-            )
+                st.write(
+                    source.page_content
+                )
