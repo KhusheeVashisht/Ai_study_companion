@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 
-from backend.pdf_loader import load_pdf
+from backend.pdf_loader import load_document
 from backend.vector_store import create_vector_store
 from backend.rag_engine import ask_question
 
@@ -13,9 +13,14 @@ st.set_page_config(
 
 st.title("🎓 AI Study Companion")
 
+
 uploaded = st.file_uploader(
     "Upload study material",
-    type=["pdf"]
+    type=[
+    "pdf",
+    "txt",
+    "docx"
+]
 )
 
 
@@ -39,16 +44,48 @@ if uploaded:
             uploaded.getbuffer()
         )
 
-    docs = load_pdf(
-        path
-    )
+    with st.status(
+        "Preparing document...",
+        expanded=True
+    ) as status:
+
+        st.write(
+            "📄 Reading uploaded document..."
+        )
+
+        docs = load_document(
+            path
+        )
+
+        st.write(
+            "✂️ Splitting document..."
+        )
+
+        st.write(
+            "🧠 Building knowledge base..."
+        )
+
+        db, chunks = (
+            create_vector_store(
+                docs
+            )
+        )
+
+        status.update(
+            label="Document ready",
+            state="complete"
+        )
 
     st.success(
-        "PDF loaded successfully!"
+        "Knowledge base ready!"
     )
 
     st.write(
         f"Pages detected: {len(docs)}"
+    )
+
+    st.write(
+        f"Chunks created: {len(chunks)}"
     )
 
     preview = ""
@@ -70,20 +107,6 @@ if uploaded:
         height=350
     )
 
-    db, chunks = (
-        create_vector_store(
-            docs
-        )
-    )
-
-    st.success(
-        "Knowledge base ready!"
-    )
-
-    st.write(
-        f"Chunks created: {len(chunks)}"
-    )
-
     st.divider()
 
     answer_mode = st.selectbox(
@@ -103,9 +126,22 @@ if uploaded:
 
     if question:
 
-        with st.spinner(
-            "Searching notes..."
-        ):
+        with st.status(
+            "Generating answer...",
+            expanded=True
+        ) as answer_status:
+
+            st.write(
+                "🔍 Searching relevant chunks..."
+            )
+
+            st.write(
+                "📚 Collecting supporting evidence..."
+            )
+
+            st.write(
+                "✨ Generating response..."
+            )
 
             answer, sources = (
                 ask_question(
@@ -113,6 +149,11 @@ if uploaded:
                     question,
                     answer_mode
                 )
+            )
+
+            answer_status.update(
+                label="Answer ready",
+                state="complete"
             )
 
         st.subheader(
