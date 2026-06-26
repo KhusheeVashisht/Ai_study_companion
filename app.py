@@ -4,6 +4,7 @@ import os
 from backend.pdf_loader import load_document
 from backend.vector_store import create_vector_store
 from backend.rag_engine import ask_question
+from utils.quiz import generate_quiz
 
 
 st.set_page_config(
@@ -17,10 +18,10 @@ st.title("🎓 AI Study Companion")
 uploaded = st.file_uploader(
     "Upload study material",
     type=[
-    "pdf",
-    "txt",
-    "docx"
-]
+        "pdf",
+        "txt",
+        "docx"
+    ]
 )
 
 
@@ -109,6 +110,67 @@ if uploaded:
 
     st.divider()
 
+    # ---------------- QUIZ ----------------
+
+    st.subheader(
+        "📝 Quiz Generator"
+    )
+
+    difficulty = st.selectbox(
+        "Difficulty",
+        [
+            "Easy",
+            "Medium",
+            "Hard"
+        ]
+    )
+
+    num_questions = st.slider(
+        "Questions",
+        1,
+        10,
+        5
+    )
+
+    if st.button(
+        "Generate Quiz"
+    ):
+
+        with st.status(
+            "Creating quiz...",
+            expanded=True
+        ):
+
+            quiz = (
+                generate_quiz(
+                    db,
+                    difficulty,
+                    num_questions
+                )
+            )
+
+        st.subheader(
+            "Generated Quiz"
+        )
+
+        st.markdown(
+            quiz
+        )
+
+        st.download_button(
+            "Download Quiz",
+            quiz,
+            file_name="quiz.txt"
+        )
+
+    st.divider()
+
+    # ---------------- Q&A ----------------
+
+    st.subheader(
+        "💬 Ask Questions"
+    )
+
     answer_mode = st.selectbox(
         "Choose response style",
         [
@@ -121,7 +183,7 @@ if uploaded:
     )
 
     question = st.text_input(
-        "Ask about the uploaded document"
+        "Ask about uploaded document"
     )
 
     if question:
@@ -132,11 +194,11 @@ if uploaded:
         ) as answer_status:
 
             st.write(
-                "🔍 Searching relevant chunks..."
+                "🔍 Searching chunks..."
             )
 
             st.write(
-                "📚 Collecting supporting evidence..."
+                "📚 Collecting evidence..."
             )
 
             st.write(
