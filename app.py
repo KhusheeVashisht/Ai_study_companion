@@ -4,7 +4,10 @@ import os
 from backend.pdf_loader import load_document
 from backend.vector_store import create_vector_store
 from backend.rag_engine import ask_question
+
 from utils.quiz import generate_quiz
+from utils.flashcards import generate_flashcards
+from utils.export import export_output
 
 
 st.set_page_config(
@@ -141,26 +144,59 @@ if uploaded:
             expanded=True
         ):
 
-            quiz = (
-                generate_quiz(
-                    db,
-                    difficulty,
-                    num_questions
-                )
+            quiz = generate_quiz(
+                db,
+                difficulty,
+                num_questions
             )
-
-        st.subheader(
-            "Generated Quiz"
-        )
 
         st.markdown(
             quiz
         )
 
-        st.download_button(
-            "Download Quiz",
+        export_output(
             quiz,
-            file_name="quiz.txt"
+            "quiz.txt"
+        )
+
+    st.divider()
+
+    # ---------------- FLASHCARDS ----------------
+
+    st.subheader(
+        "🎴 Flashcards"
+    )
+
+    card_count = st.slider(
+        "Number of flashcards",
+        1,
+        15,
+        5
+    )
+
+    if st.button(
+        "Generate Flashcards"
+    ):
+
+        with st.status(
+            "Creating flashcards...",
+            expanded=True
+        ):
+
+            cards = (
+                generate_flashcards(
+                    db,
+                    card_count
+                )
+            )
+
+        st.markdown(
+            cards
+        )
+
+        export_output(
+            cards,
+            "flashcards.txt"
         )
 
     st.divider()
@@ -224,6 +260,11 @@ if uploaded:
 
         st.write(
             answer
+        )
+
+        export_output(
+            answer,
+            "answer.txt"
         )
 
         st.subheader(
