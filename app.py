@@ -8,15 +8,76 @@ from backend.rag_engine import ask_question
 from utils.quiz import generate_quiz
 from utils.flashcards import generate_flashcards
 from utils.export import export_output
+from utils.voice import listen_question
 
+
+# ---------------- PAGE ----------------
 
 st.set_page_config(
     page_title="AI Study Companion",
     layout="wide"
 )
 
-st.title("🎓 AI Study Companion")
+st.title(
+    "🎓 AI Study Companion"
+)
 
+
+# ---------------- SIDEBAR ----------------
+
+with st.sidebar:
+
+    st.title(
+        "📚 About"
+    )
+
+    st.markdown(
+        """
+### AI Study Companion
+
+Turn documents into learning.
+
+Upload notes, resumes,
+research papers or study material
+and interact with them using AI.
+
+---
+
+### Features
+
+📄 PDF / TXT / DOCX Upload
+
+🧠 AI Question Answering
+
+📚 Source Retrieval
+
+📝 Quiz Generator
+
+🎴 Flashcards
+
+🎙️ Voice Questions
+
+⬇️ Export Results
+
+---
+
+### Built By
+
+**Khushee Vashisht**
+
+MCA (AI/ML)
+
+GitHub:
+https://github.com/KhusheeVashisht
+
+---
+
+✨ Learn smarter.
+"""
+    )
+
+
+# ---------------- UPLOAD ----------------
 
 uploaded = st.file_uploader(
     "Upload study material",
@@ -54,15 +115,17 @@ if uploaded:
     ) as status:
 
         st.write(
-            "📄 Reading uploaded document..."
+            "📄 Reading document..."
         )
 
-        docs = load_document(
-            path
+        docs = (
+            load_document(
+                path
+            )
         )
 
         st.write(
-            "✂️ Splitting document..."
+            "✂️ Splitting content..."
         )
 
         st.write(
@@ -144,10 +207,12 @@ if uploaded:
             expanded=True
         ):
 
-            quiz = generate_quiz(
-                db,
-                difficulty,
-                num_questions
+            quiz = (
+                generate_quiz(
+                    db,
+                    difficulty,
+                    num_questions
+                )
             )
 
         st.markdown(
@@ -218,16 +283,58 @@ if uploaded:
         ]
     )
 
-    question = st.text_input(
-        "Ask about uploaded document"
+    col1, col2 = (
+        st.columns(
+            [4, 1]
+        )
     )
+
+    with col1:
+
+        question = (
+            st.text_input(
+                "Ask about uploaded document"
+            )
+        )
+
+    with col2:
+
+        voice = (
+            st.button(
+                "🎙️ Speak"
+            )
+        )
+
+    if voice:
+
+        with st.spinner(
+            "Listening..."
+        ):
+
+            spoken = (
+                listen_question()
+            )
+
+        if spoken:
+
+            question = spoken
+
+            st.success(
+                f"You said: {question}"
+            )
+
+        else:
+
+            st.warning(
+                "Voice not detected"
+            )
 
     if question:
 
         with st.status(
             "Generating answer...",
             expanded=True
-        ) as answer_status:
+        ) as status:
 
             st.write(
                 "🔍 Searching chunks..."
@@ -238,7 +345,7 @@ if uploaded:
             )
 
             st.write(
-                "✨ Generating response..."
+                "✨ Generating answer..."
             )
 
             answer, sources = (
@@ -249,7 +356,7 @@ if uploaded:
                 )
             )
 
-            answer_status.update(
+            status.update(
                 label="Answer ready",
                 state="complete"
             )
