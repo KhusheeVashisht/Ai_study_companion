@@ -2,9 +2,11 @@
 
 Turn documents into interactive learning.
 
-AI Study Companion is a Retrieval-Augmented Generation (RAG) application that allows users to upload study materials and interact with them using AI.
+🔗 **Live Demo:**
+https://aistudycompanion-qkjzcxj5buysi5938rcgrq.streamlit.app/
 
-Built using Streamlit, LangChain, FAISS, and Google Gemini.
+📂 **GitHub Repository:**
+https://github.com/KhusheeVashisht/Ai_study_companion
 
 ---
 
@@ -45,70 +47,22 @@ Built using Streamlit, LangChain, FAISS, and Google Gemini.
 
 ---
 
-## 🚀 Installation
-
-Clone repository:
+## 🚀 Run Locally
 
 ```bash
 git clone https://github.com/KhusheeVashisht/Ai_study_companion.git
-```
-
-Move inside:
-
-```bash
 cd Ai_study_companion
-```
-
-Install requirements:
-
-```bash
 pip install -r requirements.txt
-```
-
-Create `.env`
-
-```env
-GOOGLE_API_KEY=your_key_here
-```
-
-Run:
-
-```bash
 streamlit run app.py
 ```
 
 ---
 
-## 📂 Project Structure
+## 🌍 Live Demo
 
-```text
-backend/
-utils/
-assets/
-app.py
-requirements.txt
-README.md
-```
+Try it here:
 
----
-
-## 📸 Features Showcase
-
-📄 Upload Documents
-
-🧠 Generate Answers
-
-📝 Create Quiz
-
-🎴 Generate Flashcards
-
-🎙️ Voice Interaction
-
----
-
-## Resume Highlight
-
-Built a RAG-based AI assistant enabling contextual Q&A, quiz generation, flashcards, and voice interaction over uploaded documents.
+https://aistudycompanion-qkjzcxj5buysi5938rcgrq.streamlit.app/
 
 ---
 
